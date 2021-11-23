@@ -122,12 +122,19 @@
         return [NSString stringWithFormat:@"%@:\n%@", self.columns[idx], field];
     }];
     
+    NSArray<NSString *> *values = [self.rows[row] flex_mapped:^id(NSString *value, NSUInteger idx) {
+        return [NSString stringWithFormat:@"'%@'", value];
+    }];
+    
     [FLEXAlert makeAlert:^(FLEXAlert *make) {
         make.title([@"Row " stringByAppendingString:@(row).stringValue]);
         NSString *message = [fields componentsJoinedByString:@"\n\n"];
         make.message(message);
         make.button(@"Copy").handler(^(NSArray<NSString *> *strings) {
             UIPasteboard.generalPasteboard.string = message;
+        });
+        make.button(@"Copy Comma Separated Values").handler(^(NSArray<NSString *> *strings) {
+            UIPasteboard.generalPasteboard.string = [values componentsJoinedByString:@", "];
         });
         
         // Option to delete row
