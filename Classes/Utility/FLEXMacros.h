@@ -9,9 +9,12 @@
 #ifndef FLEXMacros_h
 #define FLEXMacros_h
 
+
 #define flex_keywordify class NSObject;
 #define ctor flex_keywordify __attribute__((constructor)) void __flex_ctor_##__LINE__()
 #define dtor flex_keywordify __attribute__((destructor)) void __flex_dtor_##__LINE__()
+
+#ifndef strongify
 
 #define weakify(var) __weak __typeof(var) __weak__##var = var;
 
@@ -20,6 +23,8 @@ _Pragma("clang diagnostic push") \
 _Pragma("clang diagnostic ignored \"-Wshadow\"") \
 __strong typeof(var) var = __weak__##var; \
 _Pragma("clang diagnostic pop")
+
+#endif
 
 // A macro to check if we are running in a test environment
 #define FLEX_IS_TESTING() (NSClassFromString(@"XCTest") != nil)
@@ -74,12 +79,6 @@ NS_INLINE CGRect FLEXRectSetWidth(CGRect r, CGFloat width) {
 NS_INLINE CGRect FLEXRectSetHeight(CGRect r, CGFloat height) {
     r.size.height = height; return r;
 }
-
-#ifdef __IPHONE_13_0
-#define FLEX_AT_LEAST_IOS13_SDK (__IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_13_0)
-#else
-#define FLEX_AT_LEAST_IOS13_SDK NO
-#endif
 
 #define FLEXPluralString(count, plural, singular) [NSString \
     stringWithFormat:@"%@ %@", @(count), (count == 1 ? singular : plural) \
